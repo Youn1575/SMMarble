@@ -35,15 +35,15 @@ char* smmObj_getTypeName(int type)
 
 // 노드 등급(성적)을 나타내는 열거형
 typedef enum smmObjGrade {
-    smmObjGrade_A+,
+    smmObjGrade_Ap,
     smmObjGrade_A0,
-    smmObjGrade_A-,
-    smmObjGrade_B+,
+    smmObjGrade_Am,
+    smmObjGrade_Bp,
     smmObjGrade_B0,
-    smmObjGrade_B-,
-    smmObjGrade_C+,
+    smmObjGrade_Bm,
+    smmObjGrade_Cp,
     smmObjGrade_C0,
-    smmObjGrade_C-
+    smmObjGrade_Cm
 } smmObjGrade_e;
 
 

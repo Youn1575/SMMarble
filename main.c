@@ -139,19 +139,6 @@ void startGame() {
     }*/
 }
 
-// main 함수 수정
-/*
-int main(int argc, const char * argv[]) {
-    // 이전에 제시한 코드의 일부분
-    
-    //3. SM Marble game starts ---------------------------------------------------------------------------------
-    startGame();
-
-    free(cur_player);
-    system("PAUSE");
-    return 0;
-}
-*/
 ///////////////////////////////////////////////////////////////////
 
 
@@ -210,18 +197,22 @@ void actionNode(int player)
     {
         //case lecture:
         case SMMNODE_TYPE_LECTURE: //강의 칸  
+        
             // if 에너지가 없을 때 강의를 들을 수 없는 것을 조건문 달기  
             cur_player[player].accumCredit += smmObj_getNodeCredit(boardPtr); 
             cur_player[player].energy -= smmObj_getNodeEnergy(boardPtr);
-            
-        //grade 생성해야하함
-		gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit(boardPtr), 0,??성적을 랜덤으로 넣어야함);
-        //linkedList에 집어넣는 함수, smmdb_addTail 이다.
+        
+        
+        //grade 생성해야함
+		gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit(boardPtr), 0,smmObjGrade_e);
+        
+        
+		//linkedList에 집어넣는 함수, smmdb_addTail 이다.
         smmdb_addTail(LISTNO_OFFSET_GRADE + player, gradePtr);
 		//Linked List를 활용하여 성적을 꺼내서 출력하거나, 이전에 수강했던 과목이냐를 검색한다거나 할 수 있다.
-		//getdata 함수를 활용하여 하면 된다.  
+		//getdata 함수를 활용.  
         break;
-           
+           	
            
         #if 0 
            
@@ -229,22 +220,16 @@ void actionNode(int player)
 		 	cur_player[player].energy += smmObj_getNodeEnergy(boardPtr);
 		 
 		  
-		 case SMMNODE_TYPE_LABORATORY:    
-		 	
-		 
+		 case SMMNODE_TYPE_LABORATORY:    	 
 		 
 		 case SMMNODE_TYPE_HOME:    //credit:0, energy:18 
 		 	cur_player[player].energy += smmObj_getNodeEnergy(boardPtr);
-		 	
-		 
+		 			 
 		 case SMMNODE_TYPE_GOTOLAB:    // credit:0, energy:3
 		 
 		 case SMMNODE_TYPE_FOODCHANCE:    
 		 
 		 case SMMNODE_TYPE_FESTIVAL:    
-            
-            
-            
             
          #endif  
  	
@@ -269,7 +254,6 @@ void goForward(int player, int step)
            cur_player[player].name, cur_player[player].position,
            smmObj_getNodeName(boardPtr); 
 }
-
 
 
 
