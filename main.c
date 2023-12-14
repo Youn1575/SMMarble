@@ -3,7 +3,7 @@
 //  SMMarble
 //
 //  Created by Juyeop Kim on 2023/11/05.
-//
+//	Edited by Nayoun on 2023/12/14.
 
 #include <time.h>
 #include <string.h>
@@ -16,15 +16,14 @@
 #define FESTFILEPATH "marbleFestivalConfig.txt"
 
 
-
-//board configuration parameters
+//board configuration parameters (보드 설정 매개변수)
 static int board_nr;
 static int food_nr;
 static int festival_nr;
 
 static int player_nr;
 
-
+// 플레이어 구조체 정의
 typedef struct player {
         int energy;
         int position;
@@ -42,7 +41,7 @@ static int player_position[MAX_PLAYER];
 static char player_name[MAX_PLAYER][MAX_CHARNAME];
 #endif
 
-//function prototypes
+//function prototypes(함수 프로토타입)
 #if 0
 int isGraduated(void); //check if any player is graduated
  //print grade history of the player
@@ -54,7 +53,7 @@ void* findGrade(int player, char *lectureName); //find the grade from the player
 void printGrades(int player); //print all the grade history of the player
 #endif
 
-
+// 플레이어의 모든 성적 출력
 void printGrades(int player)
 {
      int i;
@@ -66,6 +65,7 @@ void printGrades(int player)
      }
 }
 
+// 모든 플레이어의 상태 출력
 void printPlayerStatus(void)
 {
      int i;
@@ -80,6 +80,7 @@ void printPlayerStatus(void)
      }
 }
 
+// 초기 에너지로 플레이어를 생성
 void generatePlayers(int n, int initEnergy) //generate a new player
 {
      int i;
@@ -103,10 +104,10 @@ void generatePlayers(int n, int initEnergy) //generate a new player
      }
 }
 
-
+// 주사위를 굴려 결과를 반환
 int rolldie(int player)
 {
-    char c;
+    char c; 
     printf(" Press any key to roll a die (press g to see grade): ");
     c = getchar();
     fflush(stdin);
@@ -119,7 +120,7 @@ int rolldie(int player)
     return (rand()%MAX_DIE + 1);
 }
 
-//action code when a player stays at a node
+//action code when a player stays at a node(노드에 머무를 때의 동작을 수행)
 void actionNode(int player)
 {
     void *boardPtr = smmdb_getData(LISTNO_NODE, cur_player[player].position );
@@ -132,9 +133,9 @@ void actionNode(int player)
     {
         //case lecture:
         case SMMNODE_TYPE_LECTURE:
-             if 
-            cur_player[player].accumCredit += smmObj_getNodeCredit( boardPtr );
-            cur_player[player].energy -= smmObj_getNodeEnergy( boardPtr );
+            // if 
+            cur_player[player].accumCredit += smmObj_getNodeCredit( boardPtr);
+            cur_player[player].energy -= smmObj_getNodeEnergy(boardPtr);
             
             //grade generation
             gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit( boardPtr ), 0, ??);
@@ -147,18 +148,18 @@ void actionNode(int player)
     }
 }
 
+// 플레이어를 보드 상에서 전진
 void goForward(int player, int step)
 {
      void *boardPtr;
      cur_player[player].position += step;
      boardPtr = smmdb_getData(LISTNO_NODE, cur_player[player].position );
      
-     printf("%s go to node %i (name: %s)\n", 
-                cur_player[player].name, cur_player[player].position,
-                smmObj_getNodeName(boardPtr);
+=
+    printf("%s go to node %i (name: %s)\n",
+           cur_player[player].name, cur_player[player].position,
+           smmObj_getNodeName(boardPtr)); 
 }
-
-
 int main(int argc, const char * argv[]) {
     
     FILE* fp;
@@ -177,7 +178,7 @@ int main(int argc, const char * argv[]) {
     srand(time(NULL));
     
     
-    //1. import parameters ---------------------------------------------------------------------------------
+    //1. import parameters (1. 매개변수 가져오기)-----------------------------------------------------------------------
     //1-1. boardConfig 
     if ((fp = fopen(BOARDFILEPATH,"r")) == NULL)
     {
@@ -189,7 +190,7 @@ int main(int argc, const char * argv[]) {
     printf("Reading board component......\n");
     while ( fscanf(fp, "%s %i %i %i", name, &type, &credit, &energy) == 4 ) //read a node parameter set
     {
-        //store the parameter set
+        //store the parameter set(매개변수 세트 저장)
         //(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade)
         void *boardObj = smmObj_genObject(name, smmObjType_board, type, credit, energy, 0);
         smmdb_addTail(LISTNO_NODE, boardObj);
@@ -271,20 +272,19 @@ int main(int argc, const char * argv[]) {
     {
         int die_result;
         
-        
-        //4-1. initial printing
+        //4-1. initial printing( 초기 출력)
         printPlayerStatus();
         
-        //4-2. die rolling (if not in experiment)        
+        //4-2. die rolling (if not in experiment)   (주사위 굴리기 (실험 중이 아닌 경우))
         die_result = rolldie(turn);
         
-        //4-3. go forward
+        //4-3. go forward (전진하기)
         goForward(turn, die_result);
 
-		//4-4. take action at the destination node of the board
+		//4-4. take action at the destination node of the board(보드의 목적지 노드에서 동작 수행)
         actionNode(turn);
         
-        //4-5. next turn
+        //4-5. next turn (다음 차례)
         turn = (turn + 1)%player_nr;
     }
     
