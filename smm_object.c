@@ -32,18 +32,20 @@ char* smmObj_getTypeName(int type)
 }
 
 
+
 // 노드 등급(성적)을 나타내는 열거형
 typedef enum smmObjGrade {
-    smmObjGrade_Ap = 0,
+    smmObjGrade_A+,
     smmObjGrade_A0,
-    smmObjGrade_Am,
-    smmObjGrade_Bp,
+    smmObjGrade_A-,
+    smmObjGrade_B+,
     smmObjGrade_B0,
-    smmObjGrade_Bm,
-    smmObjGrade_Cp,
+    smmObjGrade_B-,
+    smmObjGrade_C+,
     smmObjGrade_C0,
-    smmObjGrade_Cm
+    smmObjGrade_C-
 } smmObjGrade_e;
+
 
 // 노드를 나타내는 구조체 정의
 //1. 구조체 형식 정의
@@ -54,7 +56,7 @@ typedef struct smmObject {
        int credit;
        int energy;
        smmObjGrade_e grade;
-} smmObject_t;
+} smmObject_t; 
 
 //static smmObject_t smm_node[MAX_NODE];
 //static int smmObj_noNode = 0;
@@ -66,7 +68,8 @@ typedef struct smmObject {
 
 void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade)
 {    
-    smmObject_t* ptr;
+	
+    smmObject_t* ptr; //포인터변수 선언 (malloc하기 위해) 
     
     // 메모리 할당
     ptr = (smmObject_t*)malloc(sizeof(smmObject_t));
@@ -78,16 +81,17 @@ void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, i
     ptr->energy = energy;
     ptr->grade = grade;
     
+    //메모리 주소 반환  
     return ptr;
 }
 
 // 노드의 이름을 가져오는 함수
 //3. 관련 함수 변경 
-char* smmObj_getNodeName(void* obj)
+char* smmObj_getNodeName(void* obj) //구조체의 포인터를 입력으로 받음  
 {
-    smmObject_t* ptr = (smmObject_t*)obj;
+    smmObject_t* ptr = (smmObject_t*)obj; // 구조체 포인터로 형 변환을 하고  
     
-    return ptr->name;
+    return ptr->name; //멤버에 접근하여 포인터로 반환한다. 
 }
 
 // 노드의 타입을 가져오는 함수
