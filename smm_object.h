@@ -22,7 +22,23 @@ typedef enum smmObjType {
     smmObjType_board = 0,
     smmObjType_card,
     smmObjType_grade
-} smmObjType_e, smmObjGrade_e;
+} smmObjType_e;
+
+
+// 노드 등급(성적)을 나타내는 열거형
+typedef enum smmObjGrade {
+	
+    smmObjGrade_Ap,
+    smmObjGrade_A0,
+    smmObjGrade_Am,
+    smmObjGrade_Bp,
+    smmObjGrade_B0,
+    smmObjGrade_Bm,
+    smmObjGrade_Cp,
+    smmObjGrade_C0,
+    smmObjGrade_Cm
+} smmObjGrade_e;
+
 
 
 /* node type :
@@ -51,8 +67,12 @@ typedef enum smmObjType {
 // smm_object.h
 
 //object generation
-void smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade);
+void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade);
+// smmObjGrade_e smmObj_getNodeGrade(void* obj);
 
+
+
+/*
 //member retrieving
 char* smmObj_getNodeName(int node_nr);
 int smmObj_getNodeType(int node_nr);
@@ -61,6 +81,14 @@ int smmObj_getNodeEnergy(int node_nr);
 
 //element to string
 char* smmObj_getTypeName(int type);
+*/
+///////////////////////////////// 아래에 수정함.  
 
+// 함수 프로토타입
+char* smmObj_getNodeName(void* obj);
+int smmObj_getNodeType(void* obj);
+int smmObj_getNodeCredit(void* obj);
+int smmObj_getNodeEnergy(void* obj);
+smmObjGrade_e smmObj_getNodeGrade(void* obj);
 
 #endif /* smm_object_h */

@@ -187,6 +187,7 @@ int rolldie(int player)
 void actionNode(int player)
 {
     void *boardPtr = smmdb_getData(LISTNO_NODE, cur_player[player].position);
+    
     //int type = smmObj_getNodeType( cur_player[player].position );
     int type = smmObj_getNodeType(boardPtr);
     
@@ -204,9 +205,14 @@ void actionNode(int player)
         
         
         //grade 생성해야함
-		gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit(boardPtr), 0,smmObjGrade_e);
-        
-        
+		//gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit(boardPtr), 0, smmObjGrade_e);
+		//gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit(boardPtr), 0, smmObjGrade);        
+
+	smmObjGrade_e randomGrade = rand() % (SMMNODE_TYPE_MAX - SMMNODE_TYPE_LECTURE) + SMMNODE_TYPE_LECTURE;
+	gradePtr = smmObj_genObject(name, smmObjType_grade, 0, smmObj_getNodeCredit(boardPtr), 0, randomGrade);
+
+
+
 		//linkedList에 집어넣는 함수, smmdb_addTail 이다.
         smmdb_addTail(LISTNO_OFFSET_GRADE + player, gradePtr);
 		//Linked List를 활용하여 성적을 꺼내서 출력하거나, 이전에 수강했던 과목이냐를 검색한다거나 할 수 있다.
@@ -252,7 +258,7 @@ void goForward(int player, int step)
 
     printf("%s go to node %i (name: %s)\n",
            cur_player[player].name, cur_player[player].position,
-           smmObj_getNodeName(boardPtr); 
+           smmObj_getNodeName(boardPtr)); 
 }
 
 
@@ -298,8 +304,9 @@ int main(int argc, const char * argv[]) {
         //linkedList에 집어넣는 함수, smmdb_addTail 이다.
         smmdb_addTail(LISTNO_NODE, boardObj);//칸에 해당하는 LISTNO_NODE를 넣음. 0번에 새로 생긴 객체를 넣음.  
 		
+		smmObjGrade_e grade;
 				 
-    	void smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade);
+    //	void smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade);
         
     
 
@@ -372,7 +379,7 @@ int main(int argc, const char * argv[]) {
     
     //메모리가 얼만큼 필요하다고 동적할당 
     cur_player = (player_t*)malloc(player_nr*sizeof(player_t)); //플레이어 명수만큼 구조체를 만들게끔 
-    generatePlayers(player_nr, init);
+    generatePlayers(player_nr, initEnergy);
     
     
     

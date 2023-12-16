@@ -34,7 +34,8 @@ char* smmObj_getTypeName(int type)
 
 
 // 노드 등급(성적)을 나타내는 열거형
-typedef enum smmObjGrade {
+typedef enum smmObjGrade  { //enum 자료형 이름이 smmObjGrade 
+	smmObjGrade_e grade;
     smmObjGrade_Ap,
     smmObjGrade_A0,
     smmObjGrade_Am,
@@ -44,7 +45,7 @@ typedef enum smmObjGrade {
     smmObjGrade_Cp,
     smmObjGrade_C0,
     smmObjGrade_Cm
-} smmObjGrade_e;
+} smmObjGrade_e; //smmObjGrade 형태의 smmObjGrade_e 변수 선언  
 
 
 // 노드를 나타내는 구조체 정의
@@ -65,6 +66,7 @@ typedef struct smmObject {
 // 객체 생성 함수
 //3. 관련 함수 변경 
 //object generation
+
 
 void* smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade)
 {    
