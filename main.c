@@ -307,18 +307,14 @@ int main(int argc, const char * argv[]) {
 		smmObjGrade_e grade;
 				 
     //	void smmObj_genObject(char* name, smmObjType_e objType, int type, int credit, int energy, smmObjGrade_e grade);
-        
-    
-
-        
+ 
         if (type == SMMNODE_TYPE_HOME)
            initEnergy = energy;
         board_nr++;
     }
     fclose(fp);
     printf("Total number of board nodes : %i\n", board_nr);
-    
-    
+   
     for (i = 0;i<board_nr;i++)
     {
         void *boardObj = smmdb_getData(LISTNO_NODE, i); //구조체 메모리 주소를 얻어내야함. 
@@ -345,9 +341,7 @@ int main(int argc, const char * argv[]) {
     }
     fclose(fp);
     printf("Total number of food cards : %i\n", food_nr);
-    
-    
-    
+   
     //3. festival card config 
     if ((fp = fopen(FESTFILEPATH,"r")) == NULL)
     {
@@ -362,8 +356,7 @@ int main(int argc, const char * argv[]) {
     }
     fclose(fp);
     printf("Total number of festival cards : %i\n", festival_nr);
-    #endif
-    
+    #endif  
     
     //2. Player configuration ---------------------------------------------------------------------------------
     
@@ -375,14 +368,10 @@ int main(int argc, const char * argv[]) {
         fflush(stdin);
     }
     while (player_nr < 0 || player_nr >  MAX_PLAYER);
-    
-    
+        
     //메모리가 얼만큼 필요하다고 동적할당 
     cur_player = (player_t*)malloc(player_nr*sizeof(player_t)); //플레이어 명수만큼 구조체를 만들게끔 
     generatePlayers(player_nr, initEnergy);
-    
-    
-    
     
     //3. SM Marble game starts ---------------------------------------------------------------------------------
     while (1) 
