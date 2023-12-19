@@ -386,7 +386,7 @@ int main(int argc, const char * argv[]) {
         
         //4-3. go forward (전진하기)
         goForward(turn, die_result);
-
+	
 		//4-4. take action at the destination node of the board(보드의 목적지 노드에서 동작 수행)
         actionNode(turn);
         
