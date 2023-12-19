@@ -3,7 +3,7 @@
 //  SMMarble
 //
 //  Created by Juyeop Kim on 2023/11/05.
-//	Edited by Nayoun on 2023/12/14.
+//	Edited by Nayoun on 2023/12/19.
 
 #include <time.h>
 #include <string.h>
@@ -94,7 +94,7 @@ void startGame() {
     printf("                Sookmyung Marble !! Let's Graduate (total credit : %d)!!\n", GRADUATE_CREDIT);
     printf("-----------------------------------------------------------------------\n");
     printf("=======================================================================\n\n");
-/*
+
     int numPlayers;
     do {
         printf("Input No. of players (1 ~ %d) :", MAX_PLAYER);
@@ -104,7 +104,7 @@ void startGame() {
 
     // 플레이어 생성
     generatePlayers(numPlayers, initEnergy);
-*/
+
     // 게임 메인 루프
     int turn = 0;
     while (1) {
@@ -115,7 +115,7 @@ void startGame() {
         char c;
         scanf(" %c", &c);
         fflush(stdin);
-/*
+
         if (c == 'g') {
             printf("--> result : %d\n", 1); // 예시로 주사위 결과를 1로 가정
             printGrades(turn);
@@ -136,8 +136,49 @@ void startGame() {
             // 다음 턴
             turn = (turn + 1) % numPlayers;
         }
-    }*/
+    }
 }
+/*
+// 실험 중 상태에서 주사위를 굴려 실험을 시도하는 함수
+void attemptExperiment(int player)
+		{
+   		// 실험 성공 기준값을 1에서 6까지의 랜덤한 숫자로 설정
+    	int experimentSuccessThreshold = rand() % 6 + 1;
+    	
+		// 주사위 굴려서 실험 성공 여부 확인
+  		int experimentResult = rolldie(player);
+
+		    // 실험 성공 여부에 따른 처리
+   			if (experimentResult >= experimentSuccessThreshold)
+   			 {
+        		printf("%s successfully completed the experiment!\n", cur_player[player].name);
+        		// 실험이 성공하면 실험 중 상태를 종료하고 이동
+        		isExperimenting = 0;
+        		goForward(player, 1); // 실험 성공 시 1칸 전진
+    		}
+    		else
+    		{
+        		printf("%s's experiment failed. Staying in the laboratory.\n", cur_player[player].name);
+        		// 실험 실패 시, 이동하지 못하고 실험 중 상태로 머무름
+       			printf("Energy before the failed experiment: %d\n", cur_player[player].energy);
+        		cur_player[player].energy -= smmObj_getNodeEnergy(boardObj);
+        		printf("Energy after the failed experiment: %d\n", cur_player[player].energy);
+   			}
+			}
+
+				// 실험 중 상태인지 확인하고 실험을 시도하는 부분
+				if (isExperimenting)
+				{
+    			// 실험을 시도하고 실험 중 상태를 종료하면서 이동
+    			attemptExperiment(turn);
+				}
+				else
+				{
+    			// 실험 중이 아닌 경우에는 일반적인 주사위 굴리기 처리
+			    die_result = rolldie(turn);
+				}
+*/
+
 
 ///////////////////////////////////////////////////////////////////
 
@@ -226,7 +267,48 @@ void actionNode(int player)
 		 	cur_player[player].energy += smmObj_getNodeEnergy(boardPtr);
 		 
 		  
-		 case SMMNODE_TYPE_LABORATORY:    	 
+		 case SMMNODE_TYPE_LABORATORY:    
+		 
+	// 실험 중 상태인지 확인
+    if (cur_player[player].position == SMMNODE_TYPE_LABORATORY) {
+        // 실험 중 상태일 때
+        printf("%s is in the laboratory and conducting an experiment...\n", cur_player[player].name);
+
+        // 주사위 굴리기
+        int dice_result = rolldie(player);
+        printf("Rolling the dice... Result: %d\n", dice_result);
+
+        // 실험 성공 여부 확인 (임의의 성공 기준 값 주사위눈 랜덤 설정)
+        int experiment_success_threshold = rand() % 6 + 1;
+        
+        if (dice_result >= experiment_success_threshold) {
+            // 실험 성공
+            printf("Experiment successful! %s completed the experiment.\n", cur_player[player].name);
+            // 실험 종료 후 이동 가능
+            cur_player[player].position = LIST_END;
+            
+        } else {
+            // 실험 실패
+            printf("Experiment failed! %s needs to stay in the laboratory for another turn.\n", cur_player[player].name);
+            
+            // 실험 실패로 인한 에너지 소모
+            int energy_cost = 3;
+            cur_player[player].energy -= energy_cost;
+            printf("Energy decreased to %d.\n", cur_player[player].energy);
+        }
+    } else {
+        // 실험 중 상태가 아닐 때
+        printf("%s arrived at the laboratory. Ready to start an experiment.\n", cur_player[player].name);
+        // 실험 중 상태로 설정
+        cur_player[player].position = SMMNODE_TYPE_LABORATORY;
+    }
+    break;
+
+		 
+		 ///////////////////
+		 
+		 
+		 
 		 
 		 case SMMNODE_TYPE_HOME:    //credit:0, energy:18 
 		 	cur_player[player].energy += smmObj_getNodeEnergy(boardPtr);
