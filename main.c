@@ -296,23 +296,18 @@ void actionNode(int player)
             cur_player[player].energy -= energy_cost;
             printf("Energy decreased to %d.\n", cur_player[player].energy);
         }
-    } else {
+    } 
+		else {
         // 실험 중 상태가 아닐 때
         printf("%s arrived at the laboratory. Ready to start an experiment.\n", cur_player[player].name);
         // 실험 중 상태로 설정
         cur_player[player].position = SMMNODE_TYPE_LABORATORY;
     }
-    break;
-
-		 
-		 ///////////////////
-		 
-		 
-		 
+    break;		 
 		 
 		 case SMMNODE_TYPE_HOME:    //credit:0, energy:18 
-		 	cur_player[player].energy += smmObj_getNodeEnergy(boardPtr);
-		 			 
+		 	cur_player[player].energy += 18;
+		 
 		 case SMMNODE_TYPE_GOTOLAB:    // credit:0, energy:3
 		 
 		 case SMMNODE_TYPE_FOODCHANCE:    
