@@ -265,55 +265,124 @@ void actionNode(int player)
            
 		 case SMMNODE_TYPE_RESTAURANT:   
 		 	cur_player[player].energy += smmObj_getNodeEnergy(boardPtr);
-		 
+		 	
+		 	
+		case SMMNODE_TYPE_HOME:    //credit:0, energy:18 
+		 	cur_player[player].energy += 18;
 		  
-		 case SMMNODE_TYPE_LABORATORY:    
-		 
-	// 실험 중 상태인지 확인
-    if (cur_player[player].position == SMMNODE_TYPE_LABORATORY) {
-        // 실험 중 상태일 때
-        printf("%s is in the laboratory and conducting an experiment...\n", cur_player[player].name);
+		case SMMNODE_TYPE_LABORATORY:
+  		  // 실험 : 실험중 상태로 전환되면서 실험실로 이동 (주사위 눈 범위에서 실험 성공 기준값을 랜덤으로 지정.)
+    		if (cur_player[player].energy >= 3) {
+        		cur_player[player].energy -= 3;  // 실험 시도마다 3 에너지 소모
+        		int diceResult = rolldie(player);
+       			int experimentSuccessThreshold = rand() % 6 + 1;  // 실험 성공 기준값을 1에서 6까지의 랜덤 값으로 설정
 
-        // 주사위 굴리기
-        int dice_result = rolldie(player);
-        printf("Rolling the dice... Result: %d\n", dice_result);
+        printf("%s is conducting an experiment in the laboratory. Rolled a die: %d\n", cur_player[player].name, diceResult);
 
-        // 실험 성공 여부 확인 (임의의 성공 기준 값 주사위눈 랜덤 설정)
-        int experiment_success_threshold = rand() % 6 + 1;
-        
-        if (dice_result >= experiment_success_threshold) {
-            // 실험 성공
+        if (diceResult >= experimentSuccessThreshold) {
+            // 실험이 성공한 경우
             printf("Experiment successful! %s completed the experiment.\n", cur_player[player].name);
-            // 실험 종료 후 이동 가능
-            cur_player[player].position = LIST_END;
+            // 여기에서 실험이 성공했을 때의 추가 동작을 작성할 수 있음
+        }
             
-        } else {
-            // 실험 실패
-            printf("Experiment failed! %s needs to stay in the laboratory for another turn.\n", cur_player[player].name);
-            
-            // 실험 실패로 인한 에너지 소모
-            int energy_cost = 3;
-            cur_player[player].energy -= energy_cost;
-            printf("Energy decreased to %d.\n", cur_player[player].energy);
+        else {
+            // 실험이 실패한 경우
+            printf("Experiment failed! %s couldn't complete the experiment.\n", cur_player[player].name);
+            // 여기에서 실험이 실패했을 때의 추가 동작을 작성할 수 있음
         }
     } 
-		else {
-        // 실험 중 상태가 아닐 때
-        printf("%s arrived at the laboratory. Ready to start an experiment.\n", cur_player[player].name);
-        // 실험 중 상태로 설정
-        cur_player[player].position = SMMNODE_TYPE_LABORATORY;
+	else {
+        printf("%s doesn't have enough energy to conduct an experiment.\n", cur_player[player].name);
     }
-    break;		 
-		 
-		 case SMMNODE_TYPE_HOME:    //credit:0, energy:18 
-		 	cur_player[player].energy += 18;
-		 
-		 case SMMNODE_TYPE_GOTOLAB:    // credit:0, energy:3
+    break;
+
+		case SMMNODE_TYPE_GOTOLAB:
+   		// 실험실 : 실험중 상태면 주사위를 굴려서 사전에 지정된 실험 성공 기준값 이상이 나오면 실험이 종료되고, 그렇지 않으면 이동하지 못하고 실험중 상태로 머무름.
+   			if (cur_player[player].energy >= 3) {
+        	cur_player[player].energy -= 3;  // 실험 시도마다 3 에너지 소모
+        	int diceResult = rolldie(player);
+        	int experimentSuccessThreshold = rand() % 6 + 1;  // 실험 성공 기준값을 1에서 6까지의 랜덤 값으로 설정
+
+        printf("%s is attempting to go to the laboratory. Rolled a die: %d\n", cur_player[player].name, diceResult);
+
+        if (diceResult >= experimentSuccessThreshold) {
+            // 실험이 성공한 경우
+            printf("Arrived at the laboratory and successfully started an experiment.\n");
+        } 
+		else {
+            // 실험이 실패한 경우
+            printf("Failed to reach the laboratory or start an experiment.\n");
+        }
+    } 
+	else {
+        printf("%s doesn't have enough energy to attempt to go to the laboratory.\n", cur_player[player].name);
+    }
+    break;		
 		 
 		 case SMMNODE_TYPE_FOODCHANCE:    
+    	{
+        // 보충 찬스 : marbleFoodConfig.txt 파일에서 랜덤으로 음식을 선택하고 해당 에너지를 현재 에너지에 더함
+        FILE *foodFile = fopen("marbleFoodConfig.txt", "r"); //read모드로 읽어와서 파일열기 
+        if (foodFile == NULL) {
+            printf("[ERROR] Failed to open marbleFoodConfig.txt.\n"); //파일 열기 실패 
+            exit(EXIT_FAILURE);
+        }
+
+        // 파일에서 랜덤으로 음식 선택
+        char foodName[MAX_CHARNAME];
+        int foodEnergy;
+        int totalFoodCount = 0;
+
+        // 파일에서 총 음식의 개수 파악
+        while (fscanf(foodFile, "%s %d", foodName, &foodEnergy) == 2) {
+            totalFoodCount++;
+        }
+
+        // 랜덤으로 선택된 음식의 번호 생성
+        int randomFoodIndex = rand() % totalFoodCount;
+
+        // 파일 포인터를 다시 처음으로 되돌리고 선택된 음식까지 읽음
+        fseek(foodFile, 0, SEEK_SET);
+        for (int i = 0; i < randomFoodIndex; i++) {
+            fscanf(foodFile, "%s %d", foodName, &foodEnergy);
+        }
+
+        // 선택된 음식의 에너지를 현재 에너지에 더함
+        cur_player[player].energy += foodEnergy;
+
+        printf("%s picked a food chance card and gained %d energy from %s.\n", cur_player[player].name, foodEnergy, foodName);
+
+        fclose(foodFile);
+    	}
+    	break;
+
+
 		 
-		 case SMMNODE_TYPE_FESTIVAL:    
-            
+		 case SMMNODE_TYPE_FESTIVAL: 
+		 {
+	    FILE *f = fopen("marbleFestivalConfig.txt", "r"); //축제카드 파일 읽기 
+    		if (!f) {
+     	   	printf("[ERROR] Failed to open marbleFestivalConfig.txt.\n"); //열기 실패했을 경우 출력 
+   		    exit(EXIT_FAILURE);
+  	  		}
+
+    		char mission[MAX_CHARNAME];
+    		int c = 0;
+    		
+			//모든 문자를 읽어들여 mission 변수에 저장
+   	 		while (fscanf(f, "%[^\n]%", mission) == 1) c++; //%[^\n] 개행 문자가 나오기 전까지의 모든 문자열을 읽는 형식
+
+    		fseek(f, 0, SEEK_SET);
+
+    		for (int i = 0, r = rand() % c; i < r; fscanf(f, "%[^\n]%*c", mission), i++);
+
+    		printf("%s picked a festival card and got the mission: %s.\n", cur_player[player].name, mission);
+
+    		fclose(f);
+			} 
+
+			break;
+
          #endif  
  	
             smmdb_addTail(LISTNO_OFFSET_GRADE + player, gradePtr);
